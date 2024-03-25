@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_MAINTENANCE_WORK_MEM: 16GB
+      POSTGRES_MAX_WORKER_PROCESSES: 16
+    ports:
+      - 5000:5432
+    volumes:
+      - postgres:/var/run/postgresql
+  migrations:
+    build:
+      context: .
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/postgres
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: postgres
+    volumes:
+      - postgres:/var/run/postgresql
+    depends_on:
+      - postgres
+    restart: on-failure
+volumes:
+  postgres:
